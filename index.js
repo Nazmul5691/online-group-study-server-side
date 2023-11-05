@@ -41,6 +41,7 @@ async function run() {
 
     const featuresCollection = client.db('studyGroup').collection('features')
     const createAssignmentCollection = client.db('studyGroup').collection('assignment');
+    const userCollection = client.db('studyGroup').collection('user');
 
 
     //features 
@@ -51,6 +52,16 @@ async function run() {
     })
 
 
+    //getAssignment in assignment page
+    app.get('/createAssignment', async(req, res) =>{
+        const curser = createAssignmentCollection.find()
+        const result = await curser.toArray()
+        res.send(result);
+       })
+
+
+
+    //createAssignment
     app.post('/createAssignment', async(req, res) =>{
         const newCreateAssignment = req.body;
         // console.log(newCreateAssignment);
@@ -58,6 +69,15 @@ async function run() {
         res.send(result);
   
       })
+
+
+    //create user
+    app.post('/user', async (req, res) => {
+        const user = req.body;
+        console.log(user);
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+    });
 
 
 
