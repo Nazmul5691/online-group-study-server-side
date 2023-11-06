@@ -15,8 +15,8 @@ app.use(express.json())
 // app.use(cookieParser())
 
 
-console.log(process.env.DB_USER);
-console.log(process.env.DB_PASS);
+// console.log(process.env.DB_USER);
+// console.log(process.env.DB_PASS);
 
 
 
@@ -137,11 +137,11 @@ async function run() {
     // Create an API endpoint for submitting assignments
     app.post('/submitAssignment', async (req, res) => {
     try {
-    const { text, pdfFile, userEmail,assignmentTitle,assignmentMarks } = req.body;
+    const { text, pdfFile, email,assignmentTitle,assignmentMarks } = req.body;
     const submission = {
       text,
       pdfFile, 
-      userEmail,
+      email,
       assignmentTitle,
       assignmentMarks,
       timestamp: new Date(),
@@ -158,14 +158,55 @@ async function run() {
 
 
   //get submitted assignment
-
-
-
   app.get('/submittedAssignment', async(req, res) =>{
         const curser = submittedAssignmentCollection.find()
         const result = await curser.toArray()
         res.send(result);
        })
+
+
+  //get my submission data
+  app.get('/submittedAssignment', async(req, res) =>{
+    console.log(req.query.email);
+    let query = {};
+    if (req.query?.email){
+      query = { email: req.query.email }
+    }
+    // const curser = submittedAssignmentCollection.find(query)
+    // const result = await curser.toArray()
+
+    const result = await submittedAssignmentCollection.find(query).toArray();
+    
+    res.send(result);
+  }) 
+
+
+  //delete assignment form my assignment page
+  app.delete('/submittedAssignment/:id', async(req, res) =>{
+    const id = req.params.id;
+    const query = { _id: new ObjectId(id)}
+    const result = await submittedAssignmentCollection.deleteOne(query)
+    res.send(result)
+  })
+
+
+
+
+//   app.get('/submittedAssignment', async (req, res) => {
+//     const userEmail = req.query.email; // Use 'email' as the query parameter name
+//     let query = {};
+    
+//     if (userEmail) {
+//         query = { email: userEmail }; // Use 'email' to match the key in the document
+//     }
+    
+//     const cursor = submittedAssignmentCollection.find(query);
+//     const result = await cursor.toArray();
+    
+//     res.send(result);
+// });
+      
+  
 
 
 
