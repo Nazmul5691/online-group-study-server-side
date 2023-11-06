@@ -137,11 +137,13 @@ async function run() {
     // Create an API endpoint for submitting assignments
     app.post('/submitAssignment', async (req, res) => {
     try {
-    const { text, pdfFile, userEmail } = req.body;
+    const { text, pdfFile, userEmail,assignmentTitle,assignmentMarks } = req.body;
     const submission = {
       text,
       pdfFile, 
       userEmail,
+      assignmentTitle,
+      assignmentMarks,
       timestamp: new Date(),
     };
 
@@ -156,6 +158,9 @@ async function run() {
 
 
   //get submitted assignment
+
+
+
   app.get('/submittedAssignment', async(req, res) =>{
         const curser = submittedAssignmentCollection.find()
         const result = await curser.toArray()
