@@ -112,6 +112,15 @@ async function run() {
     });
 
 
+    //get assignmentSubmission on assignment Submission page
+    app.get('/assignmentSubmissionPage/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+          const result = await createAssignmentCollection.findOne(query)
+          res.send(result)
+    });
+
+
     //create user
     app.post('/user', async (req, res) => {
         const user = req.body;
