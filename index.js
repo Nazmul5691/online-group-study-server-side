@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 // const jwt = require('jsonwebtoken')
 // const cookieParser = require('cookie-parser')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const app = express();
 const port = process.env.PORT || 5000;
@@ -69,6 +69,37 @@ async function run() {
         res.send(result);
   
       })
+
+
+    //update assignment
+    app.put('/createAssignment/:id', async(req, res) =>{
+        const id = req.params.id;
+        const filter = {_id: new ObjectId(id)}
+        const options = {upsert: true}
+        const updatedAssignment = req.body;
+        const update = {
+          $set: {
+            title: updatedAssignment.name, 
+            marks: updatedAssignment.marks, 
+            description: updatedAssignment.description, 
+            thumbnail: updatedAssignment.thumbnail, 
+            dueDate: updatedAssignment.dueDate, 
+            difficultyLevel: updatedAssignment.difficultyLevel, 
+            photo: updatedAssignment.photo
+          }
+        }
+  
+        const result = await createAssignmentCollection.updateOne(filter, update, options)
+        res.send(result)
+      })
+
+
+      app.get('/updateAssignment/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+          const result = await createAssignmentCollection.findOne(query)
+          res.send(result)
+    });
 
 
     //create user
