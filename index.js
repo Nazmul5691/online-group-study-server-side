@@ -93,8 +93,18 @@ async function run() {
         res.send(result)
       })
 
+    
+    //get assignment on updated assignment page
+    app.get('/updateAssignment/:id', async (req, res) => {
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+          const result = await createAssignmentCollection.findOne(query)
+          res.send(result)
+    });
 
-      app.get('/updateAssignment/:id', async (req, res) => {
+
+    //get viewAssignment on view assignment page
+    app.get('/viewAssignment/:id', async (req, res) => {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
           const result = await createAssignmentCollection.findOne(query)
