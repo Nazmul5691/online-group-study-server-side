@@ -42,6 +42,7 @@ async function run() {
     const featuresCollection = client.db('studyGroup').collection('features')
     const createAssignmentCollection = client.db('studyGroup').collection('assignment');
     const userCollection = client.db('studyGroup').collection('user');
+    const submittedAssignmentCollection = client.db('studyGroup').collection('submittedAssignment');
 
 
     //features 
@@ -128,6 +129,38 @@ async function run() {
         const result = await userCollection.insertOne(user);
         res.send(result);
     });
+
+
+
+
+
+    // Create an API endpoint for submitting assignments
+    app.post('/submitAssignment', async (req, res) => {
+    try {
+    const { text, pdfFile, userEmail } = req.body;
+    const submission = {
+      text,
+      pdfFile, 
+      userEmail,
+      timestamp: new Date(),
+    };
+
+    const result = await submittedAssignmentCollection.insertOne(submission);
+    
+    res.status(200).json({ message: 'Assignment submitted successfully' });
+  } catch (error) {
+    console.error('Error submitting assignment:', error);
+    res.status(500).json({ message: 'Error submitting assignment' });
+  }
+});
+
+
+  //get submitted assignment
+  app.get('/submittedAssignment', async(req, res) =>{
+        const curser = submittedAssignmentCollection.find()
+        const result = await curser.toArray()
+        res.send(result);
+       })
 
 
 
