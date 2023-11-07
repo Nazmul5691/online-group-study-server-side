@@ -9,14 +9,15 @@ const port = process.env.PORT || 5000;
 
 
 
+
+
+
+
 //middleware
 app.use(cors())
 app.use(express.json())
 // app.use(cookieParser())
 
-
-// console.log(process.env.DB_USER);
-// console.log(process.env.DB_PASS);
 
 
 
@@ -133,40 +134,10 @@ async function run() {
 
 
 
-
-
-    // Create an API endpoint for submitting assignments
-//     app.post('/submitAssignment', async (req, res) => {
-//     try {
-//     const { text, pdfFile, email,assignmentTitle,assignmentMarks } = req.body;
-//     const submission = {
-//       text,
-//       pdfFile, 
-//       email,
-//       assignmentTitle,
-//       assignmentMarks,
-//       timestamp: new Date(),
-//     };
-
-//     const result = await submittedAssignmentCollection.insertOne(submission);
-    
-//     res.status(200).json({ message: 'Assignment submitted successfully' });
-//   } catch (error) {
-//     console.error('Error submitting assignment:', error);
-//     res.status(500).json({ message: 'Error submitting assignment' });
-//   }
-// });
-
-
-  //get submitted assignment
-  app.get('/submittedAssignment', async(req, res) =>{
-        const curser = submittedAssignmentCollection.find()
-        const result = await curser.toArray()
-        res.send(result);
-       })
+  
 
        // Create an API endpoint for submitting assignments
-    app.post('/mySubmittedAssignment', async (req, res) => {
+    app.post('/submittedAssignment', async (req, res) => {
     try {
     const { text, pdfFile, email,assignmentTitle,assignmentMarks } = req.body;
     const submission = {
@@ -189,6 +160,14 @@ async function run() {
 
 
 
+
+//get submitted assignment
+app.get('/submittedAssignment', async(req, res) =>{
+  const curser = submittedAssignmentCollection.find()
+  const result = await curser.toArray()
+  res.send(result);
+ })
+
   //get my submission data
   app.get('/mySubmittedAssignment', async(req, res) =>{
     console.log(req.query.email);
@@ -196,11 +175,6 @@ async function run() {
     if (req.query.email) {
       query.email = req.query.email;
     }
-    // if (req.query?.email){
-    //   query.email = { email: req.query.email }
-    // }
-    // const curser = submittedAssignmentCollection.find(query)
-    // const result = await curser.toArray()
 
     const result = await submittedAssignmentCollection.find(query).toArray();
     
@@ -208,8 +182,8 @@ async function run() {
   }) 
 
 
-  //delete assignment form my assignment page
-  app.delete('/submittedAssignment/:id', async(req, res) =>{
+  //delete assignment from my assignment page
+  app.delete('/mySubmittedAssignment/:id', async(req, res) =>{
     const id = req.params.id;
     const query = { _id: new ObjectId(id)}
     const result = await submittedAssignmentCollection.deleteOne(query)
@@ -217,21 +191,6 @@ async function run() {
   })
 
 
-
-
-//   app.get('/submittedAssignment', async (req, res) => {
-//     const userEmail = req.query.email; // Use 'email' as the query parameter name
-//     let query = {};
-    
-//     if (userEmail) {
-//         query = { email: userEmail }; // Use 'email' to match the key in the document
-//     }
-    
-//     const cursor = submittedAssignmentCollection.find(query);
-//     const result = await cursor.toArray();
-    
-//     res.send(result);
-// });
       
   
 //status update
