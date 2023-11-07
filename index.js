@@ -43,6 +43,7 @@ async function run() {
     const createAssignmentCollection = client.db('studyGroup').collection('assignment');
     const userCollection = client.db('studyGroup').collection('user');
     const submittedAssignmentCollection = client.db('studyGroup').collection('submittedAssignment');
+    const giveMarksCollection = client.db('studyGroup').collection('saveMarksAndFeedback')
 
 
     //features 
@@ -135,7 +136,37 @@ async function run() {
 
 
     // Create an API endpoint for submitting assignments
-    app.post('/submitAssignment', async (req, res) => {
+//     app.post('/submitAssignment', async (req, res) => {
+//     try {
+//     const { text, pdfFile, email,assignmentTitle,assignmentMarks } = req.body;
+//     const submission = {
+//       text,
+//       pdfFile, 
+//       email,
+//       assignmentTitle,
+//       assignmentMarks,
+//       timestamp: new Date(),
+//     };
+
+//     const result = await submittedAssignmentCollection.insertOne(submission);
+    
+//     res.status(200).json({ message: 'Assignment submitted successfully' });
+//   } catch (error) {
+//     console.error('Error submitting assignment:', error);
+//     res.status(500).json({ message: 'Error submitting assignment' });
+//   }
+// });
+
+
+  //get submitted assignment
+  app.get('/submittedAssignment', async(req, res) =>{
+        const curser = submittedAssignmentCollection.find()
+        const result = await curser.toArray()
+        res.send(result);
+       })
+
+       // Create an API endpoint for submitting assignments
+    app.post('/mySubmittedAssignment', async (req, res) => {
     try {
     const { text, pdfFile, email,assignmentTitle,assignmentMarks } = req.body;
     const submission = {
@@ -157,21 +188,17 @@ async function run() {
 });
 
 
-  //get submitted assignment
-  app.get('/submittedAssignment', async(req, res) =>{
-        const curser = submittedAssignmentCollection.find()
-        const result = await curser.toArray()
-        res.send(result);
-       })
-
 
   //get my submission data
-  app.get('/submittedAssignment', async(req, res) =>{
+  app.get('/mySubmittedAssignment', async(req, res) =>{
     console.log(req.query.email);
-    let query = {};
-    if (req.query?.email){
-      query = { email: req.query.email }
+    const query = {};
+    if (req.query.email) {
+      query.email = req.query.email;
     }
+    // if (req.query?.email){
+    //   query.email = { email: req.query.email }
+    // }
     // const curser = submittedAssignmentCollection.find(query)
     // const result = await curser.toArray()
 
@@ -207,6 +234,38 @@ async function run() {
 // });
       
   
+//status update
+app.patch('/submittedAssignment/:id', async (req, res) => {
+  const id = req.params.id;
+  const filter = { _id: new ObjectId(id) };
+  const updatedAssignment = req.body;
+  console.log(updatedAssignment);
+  const updateDoc = {
+      $set: {
+          status: updatedAssignment.status
+      },
+  };
+  const result = await submittedAssignmentCollection.updateOne(filter, updateDoc);
+  res.send(result);
+}) 
+
+
+ //get giveMarks on view assignment page
+ app.get('/giveMarks/:id', async (req, res) => {
+  const id = req.params.id;
+  const query = {_id: new ObjectId(id)}
+  const result = await submittedAssignmentCollection.findOne(query)
+  res.send(result)
+});
+
+
+//post for give marks and feedback
+app.post('/saveMarksAndFeedback', async(req, res) =>{
+  const newSaveMarksAndFeedback = req.body;
+  const result = await giveMarksCollection.insertOne(newSaveMarksAndFeedback)
+  res.send(result);
+
+})
 
 
 
