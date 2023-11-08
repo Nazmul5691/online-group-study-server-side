@@ -82,7 +82,7 @@ async function run() {
         const updatedAssignment = req.body;
         const update = {
           $set: {
-            title: updatedAssignment.name, 
+            title: updatedAssignment.title, 
             marks: updatedAssignment.marks, 
             description: updatedAssignment.description, 
             thumbnail: updatedAssignment.thumbnail, 
@@ -139,10 +139,10 @@ async function run() {
        // Create an API endpoint for submitting assignments
     app.post('/submittedAssignment', async (req, res) => {
     try {
-    const { text, pdfFile, email,assignmentTitle,assignmentMarks } = req.body;
+    const { text, pdfLink, email,assignmentTitle,assignmentMarks } = req.body;
     const submission = {
       text,
-      pdfFile, 
+      pdfLink, 
       email,
       assignmentTitle,
       assignmentMarks,
